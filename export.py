@@ -2,6 +2,7 @@ import io
 import folium
 import tempfile
 
+from folium.features import DivIcon
 from PIL import Image
 from shapely.geometry import Point, mapping, shape
 
@@ -28,6 +29,14 @@ with tempfile.TemporaryDirectory(dir="/tmp") as tempdir:
             icon=folium.Icon(color="red",icon="fire"),
         ).add_to(map)
 
+        folium.map.Marker([f[1], f[0]],
+            icon=DivIcon(
+                icon_size=(150,36),
+                icon_anchor=(0,0),
+                html='<div style="font-size: 12pt">%s</div>' % '2021-07-20T16:24:00+00:00',
+            )
+        ).add_to(map)
+
     # Buffer Location area
     patch = Point(-46.666548, -23.682567).buffer(0.02)
     geojson = mapping(patch)
@@ -36,7 +45,7 @@ with tempfile.TemporaryDirectory(dir="/tmp") as tempdir:
     # Save map
     map.save("map_path.html")
 
-    # # Convert map to PNG
-    # img_data = map._to_png(5)
-    # img = Image.open(io.BytesIO(img_data))
-    # img.save(image_path)
+    # Convert map to PNG
+    img_data = map._to_png(5)
+    img = Image.open(io.BytesIO(img_data))
+    img.save("image.png")
